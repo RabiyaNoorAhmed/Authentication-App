@@ -4,11 +4,7 @@ import { NavLink } from 'react-router-dom';
 import ErrorImg from '../../assets/images/error.png';
 
 const Error = () => {
-  // const history = useHistory();
 
-  // const goToHomePage = () => {
-  //   history.push('/');
-  // };
 
   return (
     <Box
