@@ -18,7 +18,8 @@ const App = () => {
   const [data, setData] = useState(false);
   const { loginData, setLoginData } = useContext(LoginContext);
   const history = useNavigate();
-
+  
+// Function to validate the dashboard access based on token
   const dashboardValid = async () => {
     let token = localStorage.getItem("usersDataToken");
     try {
@@ -42,6 +43,7 @@ const App = () => {
     }
   };
 
+   // useEffect hook to run the dashboard validation on component mount
   useEffect(() => {
     setTimeout(()=>{
       dashboardValid();

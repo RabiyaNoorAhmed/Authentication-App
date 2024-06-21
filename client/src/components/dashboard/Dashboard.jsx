@@ -8,12 +8,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 const Dashboard = () => {
   const theme = useTheme();
+  // Get loginData and setLoginData from context
   const { loginData, setLoginData } = useContext(LoginContext);
+  // Initialize navigation
   const history = useNavigate();
+  // State to check if data is loaded
   const [data, setData] = useState(false);
 
   useEffect(() => {
+    // Function to validate the dashboard access
     const dashboardValid = async () => {
+      // Get the token from localStorage
       let token = localStorage.getItem('usersDataToken');
 
       try {
@@ -22,10 +27,14 @@ const Dashboard = () => {
             Authorization: token,
           },
         });
+        // Get the response data
         const data = res.data;
+        
         if (data.status === 401 || !data) {
+          // If the user is not authorized, redirect to the error page
           history('*');
         } else {
+         // If the user is valid, update loginData and redirect to the dashboard
           setLoginData(data);
           history('/dash');
         }
@@ -34,12 +43,12 @@ const Dashboard = () => {
         history('*');
       }
     };
-
+ // Call the validation function after a 2-second delay
     setTimeout(() => {
       dashboardValid();
-      setData(true);
+      setData(true); // Set data as true to indicate loading is complete
     }, 2000);
-    dashboardValid();
+    dashboardValid();// Also call the validation function immediately
   }, [setLoginData, history]);
 
   return (

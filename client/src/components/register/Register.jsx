@@ -7,15 +7,18 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 const Register = () => {
+  // State to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
+  // State to toggle confirm password visibility
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [inputVal, setInputVal] = useState({
     fname: '',
     email: '',
     password: '',
     cpassword: ''
-  });
+  }); // State to store input values
 
+  // Function to handle input changes
   const setVal = (e) => {
     const { name, value } = e.target;
     setInputVal({
@@ -24,6 +27,7 @@ const Register = () => {
     });
   };
 
+// Function to handle form submission
   const addUserData = async (e) => {
     e.preventDefault();
 
@@ -70,6 +74,7 @@ const Register = () => {
           cpassword
         });
         // console.log(response.data);
+        // If registration is successful
         toast.success("User Registered Successfully", {
           position: "top-center"
         });
@@ -82,11 +87,12 @@ const Register = () => {
       }
     }
   };
-
+  // Function to toggle password visibility
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
-
+  
+ // Function to toggle confirm password visibility
   const handleClickShowConfirmPassword = () => {
     setShowConfirmPassword((prev) => !prev);
   };

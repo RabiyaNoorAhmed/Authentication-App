@@ -8,21 +8,24 @@ const authenticate = require("../middleware/auth");
 router.post("/register", async (req, res) => {
     const { fname, email, password, cpassword } = req.body;
 
+    // Check if all required fields are provided
     if (!fname || !email || !password || !cpassword) {
         return res.status(422).json({ error: "Please Fill All Details" });
     }
 
     try {
+        // Check if the email already exists in the database
         const preUser = await userDB.findOne({ email });
         if (preUser) {
             return res.status(422).json({ error: "This Email is Already Exist" });
         } else if (password !== cpassword) {
             return res.status(422).json({ error: "Password and Confirm Password Do Not Match" });
         } else {
+            // Create a new user document with hashed password
             const finalUser = new userDB({ fname, email, password, cpassword });
 
-            // Password Hashing
-            const storeData = await finalUser.save();
+             // Password Hashing (pre-save hook in userSchema will hash the password)
+            const storeData = await finalUser.save();  // Save the user document to the database
             res.status(201).json({ message: "User Registered Successfully" });
         }
     } catch (error) {
@@ -35,30 +38,31 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
+// Check if email and password are provided
     if (!email || !password) {
         return res.status(422).json({ error: "Please Fill All Details" });
     }
 
     try {
         const userValid = await userDB.findOne({ email });
-
+// Check if the user with the provided email exists
         if (!userValid) {
             return res.status(422).json({ error: "Invalid Details" });
         }
-
+// Compare the provided password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, userValid.password);
 
         if (!isMatch) {
             return res.status(422).json({ error: "Invalid Details" });
         }
 
-        // Token Generate
+       // Generate JWT token for authentication
         const token = await userValid.generateAuthToken();
 
-        // Cookie Generate
+       // Set JWT token as a cookie in the response
         res.cookie("userCookie", token, {
             expires: new Date(Date.now() + 9000000),
-            httpOnly: true,
+            httpOnly: true, // Cookie accessible only by the server
         });
 
         const result = { userValid, token };
@@ -70,9 +74,10 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// Valid User API
+// Valid User API (Protected Route)
 router.get("/validuser", authenticate, async (req, res) => {
     try {
+         // Fetch the validated user data using the userID from the authentication middleware
         const ValidUserOne = await userDB.findOne({ _id: req.userID });
         res.status(201).json({ status: 201, ValidUserOne });
     } catch (error) {
@@ -83,14 +88,17 @@ router.get("/validuser", authenticate, async (req, res) => {
 
 });
 
-// User LogOut APi
+// User Logout API (Protected Route)
 router.get("/logout", authenticate, async (req, res) => {
     try {
+        // Filter out the current token from the user's tokens array to logout
         req.rootUser.tokens = req.rootUser.tokens.filter((currElement) => {
             return currElement.token !== req.token
         });
 
+        // Clear the userCookie token from the client's browser
         res.clearCookie("userCookie", { path: "/" });
+        // Save the updated user document without the logged-out token
         req.rootUser.save();
         res.status(201).json({status:201})
     } catch (error) {

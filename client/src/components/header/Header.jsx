@@ -25,8 +25,10 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+// Function to log out the user
   const logoutUser = async () => {
     try {
+      // Get token from localStorage
       const token = localStorage.getItem('usersDataToken');
       const res = await axios.get('http://localhost:8000/logout', {
         headers: {
@@ -37,22 +39,22 @@ const Header = () => {
       // console.log(data);
       if (data.status === 201) {
         console.log("User logged out successfully");
-        localStorage.removeItem('usersDataToken');
-        setLoginData(false);
-        history('/');
+        localStorage.removeItem('usersDataToken'); // Remove token from localStorage
+        setLoginData(false);// Reset login data
+        history('/');// Redirect to home
       } else {
         console.log("Logout failed");
       }
     } catch (error) {
       console.error('Error logging out:', error);
-      history('*');
+      history('*'); // Redirect to error page on failure
     }
   };
-
+// Function to navigate to the error page
   const goError = () => {
     history("*");
   };
-
+// Function to navigate to the dashboard
   const goDashboard = () => {
     history("/dash");
   };

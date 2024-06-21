@@ -7,8 +7,10 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 const Login = () => {
+  // State to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
 
+// Function to toggle password visibility
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
@@ -16,10 +18,12 @@ const Login = () => {
   const [inputVal, setInputVal] = useState({
     email: '',
     password: ''
-  });
+  });  // State to store input values
 
-  const history = useNavigate();
+  const history = useNavigate(); // Initialize navigation
 
+ 
+ // Function to handle input changes
   const setVal = (e) => {
     const { name, value } = e.target;
     setInputVal((prev) => ({
@@ -28,6 +32,7 @@ const Login = () => {
     }));
   };
 
+// Function to handle form submission
   const loginUser = async (e) => {
     e.preventDefault();
 
@@ -57,9 +62,9 @@ const Login = () => {
         });
 
         if (response.status === 201) {
-          localStorage.setItem('usersDataToken', response.data.result.token);
-          history("/dash")
-          setInputVal({...inputVal, email: '', password: '' });
+          localStorage.setItem('usersDataToken', response.data.result.token); // Store token in localStorage
+          history("/dash") // Redirect to dashboard
+          setInputVal({...inputVal, email: '', password: '' }); // Reset input values
         } else {
           toast.error(response.data.error, {
             position: 'top-center'
