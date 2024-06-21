@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const userDB = require("../models/userSchema");
+
 const keySecret = process.env.JWT_SECRET
 
 // Middleware function for authentication
@@ -38,3 +39,4 @@ const authenticate = async (req, res, next) => {
 };
 
 module.exports = authenticate;
+
